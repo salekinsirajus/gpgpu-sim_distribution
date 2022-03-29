@@ -1,3 +1,5 @@
+# GPGPU-Sim
+
 Welcome to GPGPU-Sim, a cycle-level simulator modeling contemporary graphics
 processing units (GPUs) running GPU computing workloads written in CUDA or
 OpenCL. Also included in GPGPU-Sim is a performance visualization tool called
@@ -18,51 +20,56 @@ about Accel-Sim, see [https://accel-sim.github.io/](https://accel-sim.github.io/
 
 If you use GPGPU-Sim 4.0 in your research, please cite:
 
-Mahmoud Khairy, Zhesheng Shen, Tor M. Aamodt, Timothy G Rogers.
+*Mahmoud Khairy, Zhesheng Shen, Tor M. Aamodt, Timothy G Rogers.
 Accel-Sim: An Extensible Simulation Framework for Validated GPU Modeling.
 In proceedings of the 47th IEEE/ACM International Symposium on Computer Architecture (ISCA),
-May 29 - June 3, 2020.
+May 29 - June 3, 2020.*
 
 If you use CuDNN or PyTorch support (execution-driven simulation), checkpointing or our new debugging tool for functional 
 simulation errors in GPGPU-Sim for your research, please cite:
 
-Jonathan Lew, Deval Shah, Suchita Pati, Shaylin Cattell, Mengchi Zhang, Amruth Sandhupatla, 
+*Jonathan Lew, Deval Shah, Suchita Pati, Shaylin Cattell, Mengchi Zhang, Amruth Sandhupatla, 
 Christopher Ng, Negar Goli, Matthew D. Sinclair, Timothy G. Rogers, Tor M. Aamodt
 Analyzing Machine Learning Workloads Using a Detailed GPU Simulator, arXiv:1811.08933,
-https://arxiv.org/abs/1811.08933
+https://arxiv.org/abs/1811.08933*
 
 If you use the Tensor Core model in GPGPU-Sim or GPGPU-Sim's CUTLASS Library 
 for your research please cite:
 
-Md Aamir Raihan, Negar Goli, Tor Aamodt,
+*Md Aamir Raihan, Negar Goli, Tor Aamodt,
 Modeling Deep Learning Accelerator Enabled GPUs, arXiv:1811.08309, 
-https://arxiv.org/abs/1811.08309
+https://arxiv.org/abs/1811.08309*
 
 If you use the AccelWattch power model in your research, please cite:
 
-Vijay Kandiah, Scott Peverelle, Mahmoud Khairy, Junrui Pan, Amogh Manjunath, Timothy G. Rogers, Tor M. Aamodt, and Nikos Hardavellas. 2021.
+*Vijay Kandiah, Scott Peverelle, Mahmoud Khairy, Junrui Pan, Amogh Manjunath, Timothy G. Rogers, Tor M. Aamodt, and Nikos Hardavellas. 2021.
 AccelWattch: A Power Modeling Framework for Modern GPUs. In MICRO54: 54th Annual IEEE/ACM International Symposium on Microarchitecture
-(MICRO ’21), October 18–22, 2021, Virtual Event, Greece.
+(MICRO ’21), October 18–22, 2021, Virtual Event, Greece.*
 
 If you use the support for CUDA dynamic parallelism in your research, please cite:
 
-Jin Wang and Sudhakar Yalamanchili, Characterization and Analysis of Dynamic 
+*Jin Wang and Sudhakar Yalamanchili, Characterization and Analysis of Dynamic 
 Parallelism in Unstructured GPU Applications, 2014 IEEE International Symposium 
-on Workload Characterization (IISWC), November 2014.
+on Workload Characterization (IISWC), November 2014.*
 
 If you use figures plotted using AerialVision in your publications, please cite:
 
-Aaron Ariel, Wilson W. L. Fung, Andrew Turner, Tor M. Aamodt, Visualizing
+*Aaron Ariel, Wilson W. L. Fung, Andrew Turner, Tor M. Aamodt, Visualizing
 Complex Dynamics in Many-Core Accelerator Architectures, In Proceedings of the
 IEEE International Symposium on Performance Analysis of Systems and Software
-(ISPASS), pp. 164-174, White Plains, NY, March 28-30, 2010.
+(ISPASS), pp. 164-174, White Plains, NY, March 28-30, 2010.*
 
 This file contains instructions on installing, building and running GPGPU-Sim.
 Detailed documentation on what GPGPU-Sim models, how to configure it, and a
 guide to the source code can be found here: <http://gpgpu-sim.org/manual/>.
 Instructions for building doxygen source code documentation are included below.
 
-Previous versions of GPGPU-Sim (3.2.0 to 4.1.0) included the [GPUWattch Energy model](http://gpgpu-sim.org/gpuwattch/) which has been replaced by AccelWattch version 1.0 in GPGPU-Sim version 4.2.0. AccelWattch supports modern GPUs and is validated against a NVIDIA Volta QV100 GPU. Detailed documentation on AccelWattch can be found here: [AccelWattch Overview](https://github.com/VijayKandiah/accel-sim-framework#accelwattch-overview) and [AccelWattch MICRO'21 Artifact Manual](https://github.com/VijayKandiah/accel-sim-framework/blob/release/AccelWattch.md).
+Previous versions of GPGPU-Sim (3.2.0 to 4.1.0) included the [GPUWattch Energy model](http://gpgpu-sim.org/gpuwattch/)
+which has been replaced by AccelWattch version 1.0 in GPGPU-Sim version 4.2.0.
+AccelWattch supports modern GPUs and is validated against
+a NVIDIA Volta QV100 GPU. Detailed documentation on AccelWattch can be
+found here: [AccelWattch Overview](https://github.com/VijayKandiah/accel-sim-framework#accelwattch-overview)
+and [AccelWattch MICRO'21 Artifact Manual](https://github.com/VijayKandiah/accel-sim-framework/blob/release/AccelWattch.md).
 
 If you have questions, please sign up for the google groups page (see
 gpgpu-sim.org), but note that use of this simulator does not imply any level of
@@ -104,8 +111,8 @@ by Bill Dally's research group at Stanford.
 To produce output that matches the output from running the same CUDA program on
 the GPU, we have implemented several PTX instructions using the CUDA Math
 library (part of the CUDA toolkit). Code to interface with the CUDA Math
-library is contained in cuda-math.h, which also includes several structures
-derived from vector_types.h (one of the CUDA header files).
+library is contained in `cuda-math.h`, which also includes several structures
+derived from `vector_types.h` (one of the CUDA header files).
 
 ## AccelWattch Power Model
 
@@ -125,7 +132,7 @@ http://www.hpl.hp.com/research/mcpat/micro09.pdf.
 
 Assuming all dependencies required by GPGPU-Sim are installed on your system,
 to build GPGPU-Sim all you need to do is add the following line to your
-~/.bashrc file (assuming the CUDA Toolkit was installed in /usr/local/cuda):
+`~/.bashrc` file (assuming the CUDA Toolkit was installed in `/usr/local/cuda`):
 
 ```
   export CUDA_INSTALL_PATH=/usr/local/cuda
@@ -155,13 +162,13 @@ Download and install the CUDA Toolkit. It is recommended to use version 3.1 for
 normal PTX simulation and version 4.0 for cuobjdump support and/or to use
 PTXPlus (Harware instruction set support). Note that it is possible to have
 multiple versions of the CUDA toolkit installed on a single system -- just
-install them in different directories and set your CUDA_INSTALL_PATH
+install them in different directories and set your `CUDA_INSTALL_PATH`
 environment variable to point to the version you want to use.
 
 [Optional] If you want to run OpenCL on the simulator, download and install
 NVIDIA's OpenCL driver from <http://developer.nvidia.com/opencl>. Update your
-PATH and LD_LIBRARY_PATH as indicated by the NVIDIA install scripts. Note that
-you will need to use the lib64 directory if you are using a 64-bit machine. We
+`PATH` and `LD_LIBRARY_PATH` as indicated by the NVIDIA install scripts. Note that
+you will need to use the `lib64` directory if you are using a 64-bit machine. We
 have tested OpenCL on GPGPU-Sim using NVIDIA driver version 256.40
 <http://developer.download.nvidia.com/compute/cuda/3_1/drivers/devdriver_3.1_linux_64_256.40.run>
 This version of GPGPU-Sim has been updated to support more recent versions of
@@ -213,10 +220,10 @@ CUDA SDK dependencies:
 If you are running applications which use NVIDIA libraries such as cuDNN and 
 cuBLAS, install them too.
 
-Finally, ensure CUDA_INSTALL_PATH is set to the location where you installed
-the CUDA Toolkit (e.g., /usr/local/cuda) and that \$CUDA_INSTALL_PATH/bin is in
-your PATH. You probably want to modify your .bashrc file to incude the
-following (this assumes the CUDA Toolkit was installed in /usr/local/cuda):
+Finally, ensure `CUDA_INSTALL_PATH` is set to the location where you installed
+the CUDA Toolkit (e.g., `/usr/local/cuda`) and that `\$CUDA_INSTALL_PATH/bin` is in
+your `PATH`. You probably want to modify your `.bashrc` file to incude the
+following (this assumes the CUDA Toolkit was installed in `/usr/local/cuda`):
 
 	export CUDA_INSTALL_PATH=/usr/local/cuda
 	export PATH=$CUDA_INSTALL_PATH/bin
@@ -233,11 +240,11 @@ If running applications which use cuDNN or cuBLAS:
 To build the simulator, you first need to configure how you want it to be
 built. From the root directory of the simulator, type the following commands in
 a bash shell (you can check you are using a bash shell by running the command
-"echo \$SHELL", which should print "/bin/bash"):
+`"echo \$SHELL"`, which should print `"/bin/bash"`):
 
-source setup_environment <build_type>
+    source setup_environment <build_type>
 
-replace <build_type> with debug or release. Use release if you need faster
+replace `<build_type>` with debug or release. Use release if you need faster
 simulation and debug if you need to run the simulator in gdb. If nothing is
 specified, release will be used by default.
 
@@ -260,19 +267,24 @@ To clean the docs run
 	make cleandocs
 
 
-The documentation resides at doc/doxygen/html.
+The documentation resides at `doc/doxygen/html`.
 
-To run Pytorch applications with the simulator, install the modified Pytorch library as well by following instructions [here](https://github.com/gpgpu-sim/pytorch-gpgpu-sim).
+To run Pytorch applications with the simulator, install the modified Pytorch
+library as well by following instructions [here](https://github.com/gpgpu-sim/pytorch-gpgpu-sim).
 
 ## Step 3: Run
 
-Before we run, we need to make sure the application's executable file is dynamically linked to CUDA runtime library. This can be done during compilation of your program by introducing the nvcc flag "--cudart shared" in makefile (quotes should be excluded).
+Before we run, we need to make sure the application's executable file is dynamically
+linked to CUDA runtime library. This can be done during compilation of
+your program by introducing the nvcc flag `"--cudart shared"` in makefile (quotes should be excluded).
 
 To confirm the same, type the follwoing command:
 
 `ldd <your_application_name>`
 
-You should see that your application is using libcudart.so file in GPGPUSim directory. If the application is a Pytorch application, `<your_application_name>` should be `$PYTORCH_BIN`, which should be set during the Pytorch installation.
+You should see that your application is using `libcudart.so` file in GPGPUSim directory. If the application
+is a Pytorch application, `<your_application_name>` should be `$PYTORCH_BIN`,
+which should be set during the Pytorch installation.
 
 If running applications which use cuDNN or cuBLAS:
 
@@ -291,7 +303,7 @@ If running applications which use cuDNN or cuBLAS:
    (the number 61 refers to the SM version. You would need to set it based 
    on the GPGPU-Sim config `-gpgpu-ptx-force-max-capability` you use)
 
-Copy the contents of configs/QuadroFX5800/ or configs/GTX480/ to your
+Copy the contents of `configs/QuadroFX5800/` or `configs/GTX480/` to your
 application's working directory. These files configure the microarchitecture
 models to resemble the respective GPGPU architectures.
 
@@ -312,7 +324,7 @@ to point to GPGPU-Sim's instead of CUDA or OpenCL runtime so that you do NOT
 need to re-compile your application simply to run it on GPGPU-Sim.
 
 To revert back to running on the hardware, remove GPGPU-Sim from your
-LD_LIBRARY_PATH environment variable.
+`LD_LIBRARY_PATH` environment variable.
 
 The following GPGPU-Sim configuration options are used to enable AccelWattch
 
@@ -320,7 +332,7 @@ The following GPGPU-Sim configuration options are used to enable AccelWattch
 	-power_simulation_mode 0 (0=AccelWattch_SASS_SIM or AccelWattch_PTX_SIM, 1=AccelWattch_SASS_HW, 2=AccelWattch_SASS_HYBRID)
 	-accelwattch_xml_file <filename>.xml
 
-The AccelWattch XML configuration file name is set to accelwattch_sass_sim.xml by default and is
+The AccelWattch XML configuration file name is set to `accelwattch_sass_sim.xml` by default and is
 currently provided for SM7_QV100, SM7_TITANV, SM75_RTX2060_S, and SM6_TITANX. 
 Note that all these AccelWattch XML configuration files are tuned only for SM7_QV100. Please refer to
 <https://github.com/VijayKandiah/accel-sim-framework#accelwattch-overview> for more information.
@@ -329,8 +341,8 @@ Running OpenCL applications is identical to running CUDA applications. However,
 OpenCL applications need to communicate with the NVIDIA driver in order to
 build OpenCL at runtime. GPGPU-Sim supports offloading this compilation to a
 remote machine. The hostname of this machine can be specified using the
-environment variable OPENCL_REMOTE_GPU_HOST. This variable should also be set
-through the setup_environment script. If you are offloading to a remote machine,
+environment variable `OPENCL_REMOTE_GPU_HOST`. This variable should also be set
+through the `setup_environment` script. If you are offloading to a remote machine,
 you might want to setup passwordless ssh login to that machine in order to
 avoid having too retype your password for every execution of an OpenCL
 application.
@@ -417,7 +429,9 @@ process.
 
 ## Speeding up the execution
 
-Some applications take several hours to execute on GPGPUSim. This is because the simulator has to dump the PTX, analyze them and get resource usage statistics. This can be avoided everytime we execute the program in the following way:
+Some applications take several hours to execute on GPGPUSim.
+This is because the simulator has to dump the PTX, analyze them and get resource
+usage statistics. This can be avoided everytime we execute the program in the following way:
 
 1. Execute the program by enabling “-save_embedded_ptx 1” in config file, execute the code and let cuobjdump command dump all necessary files. After this process, you will get 2 new files namely:  _cuobjdump_complete_output_<some_random_name> and _1.ptx
 
