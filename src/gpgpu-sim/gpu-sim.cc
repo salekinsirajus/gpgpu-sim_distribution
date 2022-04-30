@@ -1058,9 +1058,14 @@ void gpgpu_sim::update_stats() {
   gpu_occupancy = occupancy_stats();
 }
 
+void gpgpu_sim::print_addr_count_to_file(){
+     printf("~~~~~~~~~~~~ this function gets called, you can update the file here\n");
+}
+
 void gpgpu_sim::print_stats() {
   gpgpu_ctx->stats->ptx_file_line_stats_write_file();
   gpu_print_stat();
+  print_addr_count_to_file();
 
   if (g_network_mode) {
     printf(

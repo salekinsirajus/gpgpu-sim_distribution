@@ -52,6 +52,9 @@
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
+//address, count
+std::map<unsigned long long, int> addr_ref_count;
+
 mem_fetch *shader_core_mem_fetch_allocator::alloc(
     new_addr_type addr, mem_access_type type, unsigned size, bool wr,
     unsigned long long cycle) const {
@@ -2037,6 +2040,19 @@ bool ldst_unit::memory_cycle(warp_inst_t &inst,
 
   mem_stage_stall_type stall_cond = NO_RC_FAIL;
   const mem_access_t &access = inst.accessq_back();
+
+  //updating access everytime
+  if (!m_core->shader_core_addr_ref[access.get_addr()]){
+      m_core->shader_core_addr_ref[access.get_addr()] = 1;
+  } else {
+      m_core->shader_core_addr_ref[access.get_addr()] += 1;
+  }
+  printf("core: %d, kernel: %d,ref: %llu, count: %d\n",
+		  m_core->get_sid(),
+		  access.get_addr(),
+		  //m_kernel
+		  m_core->get_kernel()->get_uid(),
+		  m_core->shader_core_addr_ref[access.get_addr()]);
 
   bool bypassL1D = false;
   if (CACHE_GLOBAL == inst.cache_op || (m_L1D == NULL)) {

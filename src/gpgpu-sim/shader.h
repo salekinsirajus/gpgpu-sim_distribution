@@ -1689,6 +1689,7 @@ struct shader_core_stats_pod {
   unsigned *gpgpu_n_shmem_bank_access;
   long *n_simt_to_mem;  // Interconnect power stats
   long *n_mem_to_simt;
+
 };
 
 class shader_core_stats : public shader_core_stats_pod {
@@ -2109,6 +2110,10 @@ class shader_core_ctx : public core_t {
     m_stats->n_simt_to_mem[m_sid] += n_flits;
   }
   bool check_if_non_released_reduction_barrier(warp_inst_t &inst);
+  
+  // collect data for memory adddress ref per kernel
+  //std::map<unsigned long long, int> addr_ref_stat_per_simt_core;
+  std::map<unsigned long long, int> shader_core_addr_ref;
 
  protected:
   unsigned inactive_lanes_accesses_sfu(unsigned active_count, double latency) {
