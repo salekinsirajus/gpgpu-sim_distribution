@@ -2042,17 +2042,17 @@ bool ldst_unit::memory_cycle(warp_inst_t &inst,
   const mem_access_t &access = inst.accessq_back();
 
   //updating access everytime
-  if (!m_core->shader_core_addr_ref[access.get_addr()]){
-      m_core->shader_core_addr_ref[access.get_addr()] = 1;
+  if (!m_stats->shader_core_addr_ref[access.get_addr()]){
+      m_stats->shader_core_addr_ref[access.get_addr()] = 1;
   } else {
-      m_core->shader_core_addr_ref[access.get_addr()] += 1;
+      m_stats->shader_core_addr_ref[access.get_addr()] += 1;
   }
   printf("core: %d, kernel: %d,ref: %llu, count: %d\n",
 		  m_core->get_sid(),
 		  access.get_addr(),
 		  //m_kernel
 		  m_core->get_kernel()->get_uid(),
-		  m_core->shader_core_addr_ref[access.get_addr()]);
+		  m_stats->shader_core_addr_ref[access.get_addr()]);
 
   bool bypassL1D = false;
   if (CACHE_GLOBAL == inst.cache_op || (m_L1D == NULL)) {

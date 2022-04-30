@@ -1825,6 +1825,9 @@ class shader_core_stats : public shader_core_stats_pod {
     return m_shader_warp_slot_issue_distro;
   }
 
+ std::map<unsigned long long, int> shader_core_addr_ref;
+
+
  private:
   const shader_core_config *m_config;
 
