@@ -2042,17 +2042,17 @@ bool ldst_unit::memory_cycle(warp_inst_t &inst,
   const mem_access_t &access = inst.accessq_back();
 
   //updating access everytime
-  if (!m_stats->shader_core_addr_ref[access.get_addr()]){
-      m_stats->shader_core_addr_ref[access.get_addr()] = 1;
+  if (!m_core->shader_core_addr_ref[access.get_addr()]){
+      m_core->shader_core_addr_ref[access.get_addr()] = 1;
   } else {
-      m_stats->shader_core_addr_ref[access.get_addr()] += 1;
+      m_core->shader_core_addr_ref[access.get_addr()] += 1;
   }
   printf("core: %d, kernel: %d,ref: %llu, count: %d\n",
 		  m_core->get_sid(),
 		  access.get_addr(),
 		  //m_kernel
 		  m_core->get_kernel()->get_uid(),
-		  m_stats->shader_core_addr_ref[access.get_addr()]);
+		  m_core->shader_core_addr_ref[access.get_addr()]);
 
   bool bypassL1D = false;
   if (CACHE_GLOBAL == inst.cache_op || (m_L1D == NULL)) {
@@ -4160,6 +4160,16 @@ void simt_core_cluster::core_cycle() {
 void simt_core_cluster::reinit() {
   for (unsigned i = 0; i < m_config->n_simt_cores_per_cluster; i++)
     m_core[i]->reinit(0, m_config->n_thread_per_shader, true);
+}
+
+void simt_core_cluster::get_addr_ref(std::map<unsigned long long, int> &ret){
+
+  for (unsigned i = 0; i < m_config->n_simt_cores_per_cluster; i++){
+  	m_core[i]->shader_core_addr_ref;
+	for (auto kv: m_core[i]->shader_core_addr_ref){
+	     ret[kv.first] = kv.second;
+    }	
+  }
 }
 
 unsigned simt_core_cluster::max_cta(const kernel_info_t &kernel) {
