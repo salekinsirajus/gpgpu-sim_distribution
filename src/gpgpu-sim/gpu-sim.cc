@@ -1063,20 +1063,12 @@ void gpgpu_sim::print_addr_count_to_file(){
 
      FILE *refcount_file;
      refcount_file = fopen("refcount.txt", "w");
-     std::map<unsigned long long, int> refcount_global; 
      for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
-             	m_cluster[i]->get_addr_ref(refcount_global, refcount_file);
-		printf("going over cluster %d, size of the refcount map: %d\n", i, refcount_global.size());
-		//empty out the refcount
-		/*
-		for (auto x: refcount_global){ 
-	            fprintf(refcount_file, "%llu %d,", x.first, x.second);
-		}*/
-		refcount_global.clear();
+             	m_cluster[i]->get_addr_ref(refcount_file);
+		printf("going over cluster %d, \n", i);
      }
      fflush(refcount_file);
      fclose(refcount_file);
-     
 }
 
 void gpgpu_sim::print_stats() {

@@ -2039,17 +2039,23 @@ bool ldst_unit::memory_cycle(warp_inst_t &inst,
   const mem_access_t &access = inst.accessq_back();
 
   //updating access everytime
-  if (!m_core->shader_core_addr_ref[access.get_addr()]){
-      m_core->shader_core_addr_ref[access.get_addr()] = 1;
+  if (!m_core->shader_core_addr_ref[
+		  std::make_pair(m_core->get_kernel()->get_uid(), access.get_addr())]
+		  ){
+      m_core->shader_core_addr_ref[std::make_pair(
+		  m_core->get_kernel()->get_uid(),
+		  access.get_addr())] = 1;
   } else {
-      m_core->shader_core_addr_ref[access.get_addr()] += 1;
+      m_core->shader_core_addr_ref[std::make_pair(
+		  m_core->get_kernel()->get_uid(),
+		  access.get_addr()
+		  )] += 1;
   }
-  printf("core: %d, kernel: %d,ref: %llu, count: %d\n",
-		  m_core->get_sid(),
+  printf("core: %d, ref: %llu, kernel: %d\n", m_core->get_sid(),
 		  access.get_addr(),
 		  //m_kernel
-		  m_core->get_kernel()->get_uid(),
-		  m_core->shader_core_addr_ref[access.get_addr()]);
+		  m_core->get_kernel()->get_uid()
+	);
 
   bool bypassL1D = false;
   if (CACHE_GLOBAL == inst.cache_op || (m_L1D == NULL)) {
@@ -4159,14 +4165,13 @@ void simt_core_cluster::reinit() {
     m_core[i]->reinit(0, m_config->n_thread_per_shader, true);
 }
 
-void simt_core_cluster::get_addr_ref(std::map<unsigned long long, int> &ret, FILE *outfile){
+void simt_core_cluster::get_addr_ref(FILE *outfile){
 
   for (unsigned i = 0; i < m_config->n_simt_cores_per_cluster; i++){
   	m_core[i]->shader_core_addr_ref;
 	fprintf(outfile, "<SM %d\n", m_core[i]->get_sid());
 	for (auto kv: m_core[i]->shader_core_addr_ref){
-	     ret[kv.first] = kv.second;
-	     fprintf(outfile, "%llu %d,", kv.first, kv.second);
+	     fprintf(outfile, "%llu %d,", std::get<1>(kv.first), kv.second);
         }	
 	fprintf(outfile, ">\n", i);
   }

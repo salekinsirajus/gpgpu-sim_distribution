@@ -2111,9 +2111,8 @@ class shader_core_ctx : public core_t {
   }
   bool check_if_non_released_reduction_barrier(warp_inst_t &inst);
   
-  // collect data for memory adddress ref per kernel
-  //std::map<unsigned long long, int> addr_ref_stat_per_simt_core;
-  std::map<unsigned long long, int> shader_core_addr_ref;
+  // kernel_id, address, count
+  std::map<std::pair<int, unsigned long long>, int> shader_core_addr_ref;
 
  protected:
   unsigned inactive_lanes_accesses_sfu(unsigned active_count, double latency) {
@@ -2345,8 +2344,7 @@ class simt_core_cluster {
   void get_L1D_sub_stats(struct cache_sub_stats &css) const;
   void get_L1C_sub_stats(struct cache_sub_stats &css) const;
   void get_L1T_sub_stats(struct cache_sub_stats &css) const;
-  //void get_addr_ref(std::map<long long unsigned int, int> &rv);
-  void get_addr_ref(std::map<unsigned long long, int> &ret, FILE *outfile);
+  void get_addr_ref(FILE *outfile);
 
   void get_icnt_stats(long &n_simt_to_mem, long &n_mem_to_simt) const;
   float get_current_occupancy(unsigned long long &active,
