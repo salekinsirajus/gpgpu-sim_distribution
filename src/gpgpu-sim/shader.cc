@@ -4162,13 +4162,16 @@ void simt_core_cluster::reinit() {
     m_core[i]->reinit(0, m_config->n_thread_per_shader, true);
 }
 
-void simt_core_cluster::get_addr_ref(std::map<unsigned long long, int> &ret){
+void simt_core_cluster::get_addr_ref(std::map<unsigned long long, int> &ret, FILE *outfile){
 
   for (unsigned i = 0; i < m_config->n_simt_cores_per_cluster; i++){
   	m_core[i]->shader_core_addr_ref;
+	fprintf(outfile, "<SM %d\n", m_core[i]->get_sid());
 	for (auto kv: m_core[i]->shader_core_addr_ref){
 	     ret[kv.first] = kv.second;
-    }	
+	     fprintf(outfile, "%llu %d,", kv.first, kv.second);
+        }	
+	fprintf(outfile, ">\n", i);
   }
 }
 
