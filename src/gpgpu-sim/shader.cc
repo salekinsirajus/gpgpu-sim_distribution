@@ -2038,7 +2038,7 @@ bool ldst_unit::memory_cycle(warp_inst_t &inst,
   mem_stage_stall_type stall_cond = NO_RC_FAIL;
   const mem_access_t &access = inst.accessq_back();
 
-  //updating access everytime
+  // profiling address references everytime an address comes through 
   if (!m_core->shader_core_addr_ref[
 		  std::make_pair(m_core->get_kernel()->get_uid(), access.get_addr())]
 		  ){
@@ -4165,13 +4165,26 @@ void simt_core_cluster::reinit() {
     m_core[i]->reinit(0, m_config->n_thread_per_shader, true);
 }
 
+void simt_core_cluster::load_addr_ref(int sid, std::map<std::pair<int, unsigned long long>, int> &tmp){
+    //Load profiled addresses into each SM
+    for (unsigned i = 0; i < m_config->n_simt_cores_per_cluster; i++){
+        m_core[i]->get_sid();
+
+        if (sid == m_core[i]->get_sid()){
+            printf("input SM: %d, Found SM: %d\n", sid, m_core[i]->get_sid());
+            printf("TODO: COPY OVER TMP TO CORES DATA STRUCTURE\n");
+            /* Copy the contents fof tmp to SM's own vector*/
+            //m_core[i]->shader_core_addr_ref.assign(
+        }
+    }
+}
+
 void simt_core_cluster::get_addr_ref(FILE *outfile){
 
   for (unsigned i = 0; i < m_config->n_simt_cores_per_cluster; i++){
-  	m_core[i]->shader_core_addr_ref;
 	fprintf(outfile, "<SM %d\n", m_core[i]->get_sid());
 	for (auto kv: m_core[i]->shader_core_addr_ref){
-	     fprintf(outfile, "%llu %d,", std::get<1>(kv.first), kv.second);
+	     fprintf(outfile, "%d %llu %d\n", std::get<0>(kv.first), std::get<1>(kv.first), kv.second);
         }	
 	fprintf(outfile, ">\n", i);
   }

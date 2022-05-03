@@ -2344,6 +2344,7 @@ class simt_core_cluster {
   void get_L1D_sub_stats(struct cache_sub_stats &css) const;
   void get_L1C_sub_stats(struct cache_sub_stats &css) const;
   void get_L1T_sub_stats(struct cache_sub_stats &css) const;
+  void load_addr_ref(int sid, std::map<std::pair<int, unsigned long long>, int> &s);
   void get_addr_ref(FILE *outfile);
 
   void get_icnt_stats(long &n_simt_to_mem, long &n_mem_to_simt) const;

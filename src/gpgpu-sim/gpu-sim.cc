@@ -1025,6 +1025,8 @@ void gpgpu_sim::init() {
     set_spill_interval(m_config.gpgpu_cflog_interval * 40);
   }
 
+  load_profiled_addressess();
+
   if (g_network_mode) icnt_init();
 
     // McPAT initialization function. Called on first launch of GPU
@@ -1058,14 +1060,72 @@ void gpgpu_sim::update_stats() {
   gpu_occupancy = occupancy_stats();
 }
 
-void gpgpu_sim::print_addr_count_to_file(){
-     printf("~~~~~~~~~~~~ this function gets called, you can update the file here\n");
+void gpgpu_sim::load_profiled_addressess(){
+    /* Load profiled addresses from a file*/
 
+    FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    fp = fopen("refcount.txt", "r");
+    if (fp == NULL){
+        printf("Could not read input file. Turned on profiling\n");
+        return;
+    }
+
+    char *token;
+    int wordcount=0, count=0;
+    char *ph[5]; //a placeholder for reading numbers form each line
+
+    std::map<std::pair<int, unsigned long long>, int> sm_ref_holder;
+
+    int which_sm = -1;
+    while ((read = getline(&line, &len, fp)) != -1) {
+        //line length =, read);
+        token = strtok(line, " \n\t");
+        /* While there are tokens in "string" */
+        while( token != NULL ) {
+            ph[count] = token;
+            /* Get next token: */
+            token = strtok( NULL, " \n\t");
+            count++;
+        }
+        wordcount=count;
+        count=0;
+
+        // if c == 3, this contains kernel, address, and count
+        if (wordcount == 3){
+            sm_ref_holder[std::make_pair( atoi(ph[0]), atoll(ph[1]))] = atoi(ph[2]);
+        // if c == 1, this contains the end of the SM
+        } else if (wordcount == 1){
+            //stop loading data
+            //find and copy over to the SM
+            for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
+             	m_cluster[i]->load_addr_ref(which_sm, sm_ref_holder);
+            }
+
+            sm_ref_holder.clear();   //reset map
+            which_sm = -1;           //reset sm id
+        
+        } else if (wordcount == 2){
+        // if c == 2, this contains SM
+           //get the SM number
+           which_sm = atoi(ph[1]);  //get SM
+        }
+    }
+
+    fclose(fp);
+    if (line){
+        free(line);
+    }
+}
+
+void gpgpu_sim::print_addr_count_to_file(){
      FILE *refcount_file;
      refcount_file = fopen("refcount.txt", "w");
      for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
-             	m_cluster[i]->get_addr_ref(refcount_file);
-		printf("going over cluster %d, \n", i);
+        m_cluster[i]->get_addr_ref(refcount_file);
      }
      fflush(refcount_file);
      fclose(refcount_file);
