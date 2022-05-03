@@ -535,6 +535,7 @@ class gpgpu_sim : public gpgpu_t {
   void dump_pipeline(int mask, int s, int m) const;
 
   void load_profiled_addressess();
+  bool should_profile_addresses;
 
   void perf_memcpy_to_gpu(size_t dst_start_addr, size_t count);
 

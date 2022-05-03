@@ -1071,7 +1071,18 @@ void gpgpu_sim::load_profiled_addressess(){
     fp = fopen("refcount.txt", "r");
     if (fp == NULL){
         printf("Could not read input file. Turned on profiling\n");
+        // no profiling found, go create some
+        should_profile_addresses = true;
+        for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
+            m_cluster[i]->update_address_profiling_switch(false);
+        }
         return;
+    }
+
+    // profiled addresses available
+    should_profile_addresses = false;
+    for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
+        m_cluster[i]->update_address_profiling_switch(true);
     }
 
     char *token;
@@ -1122,13 +1133,15 @@ void gpgpu_sim::load_profiled_addressess(){
 }
 
 void gpgpu_sim::print_addr_count_to_file(){
-     FILE *refcount_file;
-     refcount_file = fopen("refcount.txt", "w");
-     for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
-        m_cluster[i]->get_addr_ref(refcount_file);
+     if (should_profile_addresses){
+         FILE *refcount_file;
+         refcount_file = fopen("refcount.txt", "w");
+         for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
+            m_cluster[i]->get_addr_ref(refcount_file);
+         }
+         fflush(refcount_file);
+         fclose(refcount_file);
      }
-     fflush(refcount_file);
-     fclose(refcount_file);
 }
 
 void gpgpu_sim::print_stats() {

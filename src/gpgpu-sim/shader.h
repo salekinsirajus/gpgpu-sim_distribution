@@ -2259,6 +2259,7 @@ class shader_core_ctx : public core_t {
   bool occupy_shader_resource_1block(kernel_info_t &kernel, bool occupy);
   void release_shader_resource_1block(unsigned hw_ctaid, kernel_info_t &kernel);
   int find_available_hwtid(unsigned int cta_size, bool occupy);
+  bool is_profiled_addresses_available;
 
  private:
   unsigned int m_occupied_n_threads;
@@ -2346,6 +2347,7 @@ class simt_core_cluster {
   void get_L1T_sub_stats(struct cache_sub_stats &css) const;
   void load_addr_ref(int sid, std::map<std::pair<int, unsigned long long>, int> &s);
   void get_addr_ref(FILE *outfile);
+  void update_address_profiling_switch(bool should_profile);
 
   void get_icnt_stats(long &n_simt_to_mem, long &n_mem_to_simt) const;
   float get_current_occupancy(unsigned long long &active,

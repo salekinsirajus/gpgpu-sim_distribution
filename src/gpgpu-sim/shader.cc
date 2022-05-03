@@ -2038,20 +2038,21 @@ bool ldst_unit::memory_cycle(warp_inst_t &inst,
   mem_stage_stall_type stall_cond = NO_RC_FAIL;
   const mem_access_t &access = inst.accessq_back();
 
-  // profiling address references everytime an address comes through 
-  if (!m_core->shader_core_addr_ref[
-		  std::make_pair(m_core->get_kernel()->get_uid(), access.get_addr())]
-		  ){
-      m_core->shader_core_addr_ref[std::make_pair(
-		  m_core->get_kernel()->get_uid(),
-		  access.get_addr())] = 1;
-  } else {
-      m_core->shader_core_addr_ref[std::make_pair(
-		  m_core->get_kernel()->get_uid(),
-		  access.get_addr()
-		  )] += 1;
+  if (!m_core->is_profiled_addresses_available){
+      printf("profiling address references everytime an address comes through\n");
+      if (!m_core->shader_core_addr_ref[
+              std::make_pair(m_core->get_kernel()->get_uid(), access.get_addr())]
+              ){
+          m_core->shader_core_addr_ref[std::make_pair(
+              m_core->get_kernel()->get_uid(),
+              access.get_addr())] = 1;
+      } else {
+          m_core->shader_core_addr_ref[std::make_pair(
+              m_core->get_kernel()->get_uid(),
+              access.get_addr()
+              )] += 1;
+      }
   }
-
   /*
   printf("core: %d, ref: %llu, kernel: %d\n", m_core->get_sid(),
 		  access.get_addr(),
@@ -4184,6 +4185,16 @@ void simt_core_cluster::load_addr_ref(int sid, std::map<std::pair<int, unsigned 
         }
     }
 }
+
+void simt_core_cluster::update_address_profiling_switch(bool status){
+    /* Carry over the info whether profiled addresses are avilable or 
+     * not
+     * */
+  for (unsigned i = 0; i < m_config->n_simt_cores_per_cluster; i++){
+    m_core[i]->is_profiled_addresses_available = status;
+  }
+}
+
 
 void simt_core_cluster::get_addr_ref(FILE *outfile){
 
