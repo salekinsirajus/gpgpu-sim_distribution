@@ -2051,11 +2051,14 @@ bool ldst_unit::memory_cycle(warp_inst_t &inst,
 		  access.get_addr()
 		  )] += 1;
   }
+
+  /*
   printf("core: %d, ref: %llu, kernel: %d\n", m_core->get_sid(),
 		  access.get_addr(),
 		  //m_kernel
 		  m_core->get_kernel()->get_uid()
 	);
+  */
 
   bool bypassL1D = false;
   if (CACHE_GLOBAL == inst.cache_op || (m_L1D == NULL)) {
@@ -4174,7 +4177,10 @@ void simt_core_cluster::load_addr_ref(int sid, std::map<std::pair<int, unsigned 
             printf("input SM: %d, Found SM: %d\n", sid, m_core[i]->get_sid());
             printf("TODO: COPY OVER TMP TO CORES DATA STRUCTURE\n");
             /* Copy the contents fof tmp to SM's own vector*/
-            //m_core[i]->shader_core_addr_ref.assign(
+            printf("PRE size of the addr ref for shader core: %d\n", m_core[i]->shader_core_addr_ref.size());
+            m_core[i]->shader_core_addr_ref.insert(tmp.begin(), tmp.end());
+            printf("POST size of the addr ref for shader core: %d\n", m_core[i]->shader_core_addr_ref.size());
+            return;
         }
     }
 }
