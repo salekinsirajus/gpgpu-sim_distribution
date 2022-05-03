@@ -2037,15 +2037,15 @@ bool ldst_unit::bypass_low_freq_address(new_addr_type addr_ref){
                           )
                    ];
     if (refcount == NULL){
-        printf("No record available, skipping\n");
+        //No record available, skipping
         return true;
     }
     else if (refcount < 3 ){
-        printf("less than 3, skipping\n");
+        //less than 3, skipping
         return true;
     }
 
-    printf("high frequency address. Not skipping\n");
+    //high frequency address. Not skipping
 	return false;
 }
 
