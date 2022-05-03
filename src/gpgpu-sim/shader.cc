@@ -4213,12 +4213,9 @@ void simt_core_cluster::load_addr_ref(int sid, std::map<std::pair<int, unsigned 
         m_core[i]->get_sid();
 
         if (sid == m_core[i]->get_sid()){
-            printf("input SM: %d, Found SM: %d\n", sid, m_core[i]->get_sid());
-            printf("TODO: COPY OVER TMP TO CORES DATA STRUCTURE\n");
             /* Copy the contents fof tmp to SM's own vector*/
-            printf("PRE size of the addr ref for shader core: %d\n", m_core[i]->shader_core_addr_ref.size());
+            printf("input SM: %d, Found SM: %d\n", sid, m_core[i]->get_sid());
             m_core[i]->shader_core_addr_ref.insert(tmp.begin(), tmp.end());
-            printf("POST size of the addr ref for shader core: %d\n", m_core[i]->shader_core_addr_ref.size());
             return;
         }
     }
