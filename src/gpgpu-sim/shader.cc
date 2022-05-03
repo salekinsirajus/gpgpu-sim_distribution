@@ -2025,6 +2025,30 @@ bool ldst_unit::texture_cycle(warp_inst_t &inst, mem_stage_stall_type &rc_fail,
   return inst.accessq_empty();  // done if empty.
 }
 
+bool ldst_unit::bypass_low_freq_address(new_addr_type addr_ref){
+    /** 
+     * kernel_id, map of frequencies, address
+     */
+
+    int refcount = m_core->shader_core_addr_ref[
+                      std::make_pair(
+                          m_core->get_kernel()->get_uid(),
+                          addr_ref
+                          )
+                   ];
+    if (refcount == NULL){
+        printf("No record available, skipping\n");
+        return true;
+    }
+    else if (refcount < 3 ){
+        printf("less than 3, skipping\n");
+        return true;
+    }
+
+    printf("high frequency address. Not skipping\n");
+	return false;
+}
+
 bool ldst_unit::memory_cycle(warp_inst_t &inst,
                              mem_stage_stall_type &stall_reason,
                              mem_stage_access_type &access_type) {
@@ -2069,6 +2093,13 @@ bool ldst_unit::memory_cycle(warp_inst_t &inst,
     if (m_core->get_config()->gmem_skip_L1D && (CACHE_L1 != inst.cache_op))
       bypassL1D = true;
   }
+
+  if (m_core->is_profiled_addresses_available){
+      if (bypass_low_freq_address(access.get_addr())){
+        bypassL1D = true;
+      }
+  }
+
   if (bypassL1D) {
     // bypass L1 cache
     unsigned control_size =
@@ -2614,6 +2645,13 @@ void ldst_unit::cycle() {
                        GLOBAL_ACC_W) {  // global memory access
           if (m_core->get_config()->gmem_skip_L1D) bypassL1D = true;
         }
+
+        if (m_core->is_profiled_addresses_available){
+              if (bypass_low_freq_address(mf->get_addr())){
+                  bypassL1D = true;
+              }
+        }
+
         if (bypassL1D) {
           if (m_next_global == NULL) {
             mf->set_status(IN_SHADER_FETCHED,

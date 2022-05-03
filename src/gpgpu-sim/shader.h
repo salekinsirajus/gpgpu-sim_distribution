@@ -1335,6 +1335,9 @@ class ldst_unit : public pipelined_simd_unit {
   mem_stage_stall_type process_memory_access_queue_l1cache(l1_cache *cache,
                                                            warp_inst_t &inst);
 
+
+  bool bypass_low_freq_address(new_addr_type addr_ref);
+
   const memory_config *m_memory_config;
   class mem_fetch_interface *m_icnt;
   shader_core_mem_fetch_allocator *m_mf_allocator;
