@@ -1025,7 +1025,12 @@ void gpgpu_sim::init() {
     set_spill_interval(m_config.gpgpu_cflog_interval * 40);
   }
 
-  load_profiled_addressess();
+  //setting cache profiling options
+  set_cache_profile_options();
+  //load profiled data from a file if the setting is turned on
+  if (load_cached_profile){
+      load_profiled_addressess();
+  }
 
   if (g_network_mode) icnt_init();
 
@@ -1060,6 +1065,25 @@ void gpgpu_sim::update_stats() {
   gpu_occupancy = occupancy_stats();
 }
 
+void gpgpu_sim::set_cache_profile_options(){
+    // collect these settings from a file
+    collect_cache_profile = false;
+    use_cached_profile = false;
+    load_cached_profile = false;
+
+    for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
+
+        m_cluster[i]->collect_cache_profile = collect_cache_profile;
+        m_cluster[i]->use_cached_profile = use_cached_profile;
+        m_cluster[i]->load_cached_profile = load_cached_profile;
+
+        m_cluster[i]->set_cache_profile_options(
+            collect_cache_profile, use_cached_profile,
+            load_cached_profile
+        );
+    }
+}
+
 void gpgpu_sim::load_profiled_addressess(){
     /* Load profiled addresses from a file*/
 
@@ -1070,26 +1094,8 @@ void gpgpu_sim::load_profiled_addressess(){
 
     fp = fopen("refcount.txt", "r");
     if (fp == NULL){
-        printf("Could not read input file. Turned on profiling\n");
-        // no profiling found, let's go create some 
-        should_profile_addresses = true;
-        for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
-            // profiled addresses are not available
-            m_cluster[i]->update_address_profiling_switch(false);
-        }
+        printf("Could not read input file.\n");
         return;
-    }
-
-    /*
-    if (should_profile_addresses == true){
-        return;
-    }*/
-
-    // profiled data available, not going to profile during this run
-    should_profile_addresses = false;
-    for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
-        // profiled addresses available
-        m_cluster[i]->update_address_profiling_switch(true);
     }
 
     char *token;
@@ -1120,7 +1126,7 @@ void gpgpu_sim::load_profiled_addressess(){
             //stop loading data
             //find and copy over to the SM
             for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
-             	m_cluster[i]->load_addr_ref(which_sm, sm_ref_holder);
+             	m_cluster[i]->load_addr_ref_to_sm(which_sm, sm_ref_holder);
             }
 
             sm_ref_holder.clear();   //reset map
@@ -1140,11 +1146,14 @@ void gpgpu_sim::load_profiled_addressess(){
 }
 
 void gpgpu_sim::print_addr_count_to_file(){
-     if (should_profile_addresses){
+    /* This function collects all the profiled data from SIMT
+     * clusters and print them to a file. The heavy lifting is delegated
+     * to the cluster's version of that function*/
+     if (collect_cache_profile==true){
          FILE *refcount_file;
          refcount_file = fopen("refcount.txt", "w");
          for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
-            m_cluster[i]->get_addr_ref(refcount_file);
+            m_cluster[i]->add_profiled_refs_to_file(refcount_file);
          }
          fflush(refcount_file);
          fclose(refcount_file);

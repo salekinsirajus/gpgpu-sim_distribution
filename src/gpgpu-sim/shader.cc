@@ -2061,9 +2061,9 @@ bool ldst_unit::memory_cycle(warp_inst_t &inst,
 
   mem_stage_stall_type stall_cond = NO_RC_FAIL;
   const mem_access_t &access = inst.accessq_back();
-
-  if (!m_core->is_profiled_addresses_available){
-      printf("profiling address references everytime an address comes through\n");
+  
+  // Collect addresses references here
+  if (m_core->collect_cache_profile == true){
       if (!m_core->shader_core_addr_ref[
               std::make_pair(m_core->get_kernel()->get_uid(), access.get_addr())]
               ){
@@ -2094,7 +2094,7 @@ bool ldst_unit::memory_cycle(warp_inst_t &inst,
       bypassL1D = true;
   }
 
-  if (m_core->is_profiled_addresses_available){
+  if (m_core->use_cached_profile == true){
       if (bypass_low_freq_address(access.get_addr())){
         bypassL1D = true;
       }
@@ -2646,7 +2646,7 @@ void ldst_unit::cycle() {
           if (m_core->get_config()->gmem_skip_L1D) bypassL1D = true;
         }
 
-        if (m_core->is_profiled_addresses_available){
+        if (m_core->use_cached_profile){
               if (bypass_low_freq_address(mf->get_addr())){
                   bypassL1D = true;
               }
@@ -4207,31 +4207,31 @@ void simt_core_cluster::reinit() {
     m_core[i]->reinit(0, m_config->n_thread_per_shader, true);
 }
 
-void simt_core_cluster::load_addr_ref(int sid, std::map<std::pair<int, unsigned long long>, int> &tmp){
+void simt_core_cluster::load_addr_ref_to_sm(int sid, std::map<std::pair<int, unsigned long long>, int> &tmp){
     //Load profiled addresses into each SM
     for (unsigned i = 0; i < m_config->n_simt_cores_per_cluster; i++){
         m_core[i]->get_sid();
 
         if (sid == m_core[i]->get_sid()){
             /* Copy the contents fof tmp to SM's own vector*/
-            printf("input SM: %d, Found SM: %d\n", sid, m_core[i]->get_sid());
             m_core[i]->shader_core_addr_ref.insert(tmp.begin(), tmp.end());
             return;
         }
     }
 }
 
-void simt_core_cluster::update_address_profiling_switch(bool status){
-    /* Carry over the info whether profiled addresses are avilable or 
-     * not
-     * */
+void simt_core_cluster::set_cache_profile_options(bool collect, bool use, bool load){
   for (unsigned i = 0; i < m_config->n_simt_cores_per_cluster; i++){
-    m_core[i]->is_profiled_addresses_available = status;
+    m_core[i]->collect_cache_profile = collect;
+    m_core[i]->use_cached_profile = use;
+    m_core[i]->load_cached_profile = load;
   }
 }
 
-
-void simt_core_cluster::get_addr_ref(FILE *outfile){
+void simt_core_cluster::add_profiled_refs_to_file(FILE *outfile){
+    /* Iterate over all the clusters and write profiled
+     * data into the file passed
+     * */
 
   for (unsigned i = 0; i < m_config->n_simt_cores_per_cluster; i++){
 	fprintf(outfile, "<SM %d\n", m_core[i]->get_sid());

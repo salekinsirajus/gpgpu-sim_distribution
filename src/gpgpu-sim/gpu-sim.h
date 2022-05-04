@@ -534,8 +534,12 @@ class gpgpu_sim : public gpgpu_t {
   void gpu_print_stat();
   void dump_pipeline(int mask, int s, int m) const;
 
+  void set_cache_profile_options();
   void load_profiled_addressess();
-  bool should_profile_addresses;
+
+  bool collect_cache_profile;
+  bool use_cached_profile;
+  bool load_cached_profile;
 
   void perf_memcpy_to_gpu(size_t dst_start_addr, size_t count);
 
