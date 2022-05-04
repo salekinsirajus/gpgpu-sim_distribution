@@ -534,6 +534,7 @@ class gpgpu_sim : public gpgpu_t {
   void gpu_print_stat();
   void dump_pipeline(int mask, int s, int m) const;
 
+  void load_cache_profile_options_from_file();
   void set_cache_profile_options();
   void load_profiled_addressess();
 

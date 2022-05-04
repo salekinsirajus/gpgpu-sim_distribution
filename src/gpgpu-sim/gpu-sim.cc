@@ -1065,11 +1065,57 @@ void gpgpu_sim::update_stats() {
   gpu_occupancy = occupancy_stats();
 }
 
+void gpgpu_sim::load_cache_profile_options_from_file(){
+
+    FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    char *token;
+
+    char *ph[2];
+  
+    int count=0; 
+    fp = fopen("profile.txt", "r");
+    if (fp != NULL){
+        while ((read = getline(&line, &len, fp)) != -1) {
+            token = strtok(line, " \n\t");
+            while( token != NULL ) {
+                ph[count] = token;
+                token = strtok( NULL, " \n\t");
+                count++;
+            }
+
+            if (strcmp(ph[0], "collect") == 0){
+                if (atoi(ph[1]) == 1){
+                    collect_cache_profile = true;
+                }
+            }
+
+            if (strcmp(ph[0], "use") == 0){
+                if (atoi(ph[1]) == 1){
+                    use_cached_profile = true;
+                }
+            }
+
+            if (strcmp(ph[0], "load") == 0){
+                if (atoi(ph[1]) == 1){
+                    load_cached_profile = true;
+                }
+            }
+            count=0;
+        }
+    }
+}
+
 void gpgpu_sim::set_cache_profile_options(){
-    // collect these settings from a file
+    //by default they are all false
     collect_cache_profile = false;
     use_cached_profile = false;
     load_cached_profile = false;
+    
+    // see if user specified any changes 
+    load_cache_profile_options_from_file();
 
     for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
 
