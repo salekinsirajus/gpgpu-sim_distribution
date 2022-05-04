@@ -1071,17 +1071,24 @@ void gpgpu_sim::load_profiled_addressess(){
     fp = fopen("refcount.txt", "r");
     if (fp == NULL){
         printf("Could not read input file. Turned on profiling\n");
-        // no profiling found, go create some
+        // no profiling found, let's go create some 
         should_profile_addresses = true;
         for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
+            // profiled addresses are not available
             m_cluster[i]->update_address_profiling_switch(false);
         }
         return;
     }
 
-    // profiled addresses available
+    /*
+    if (should_profile_addresses == true){
+        return;
+    }*/
+
+    // profiled data available, not going to profile during this run
     should_profile_addresses = false;
     for (unsigned i = 0; i < m_shader_config->n_simt_clusters; i++){
+        // profiled addresses available
         m_cluster[i]->update_address_profiling_switch(true);
     }
 
